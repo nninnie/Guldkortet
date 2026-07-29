@@ -12,6 +12,14 @@ namespace Guldkortet2
     {
         private TcpClient klient; // Klienten (NOS_Export) som ansluter                  
         private TcpListener lyssnare; // Servern som lyssnar
+        private Form1 form; // Kunna praata med Form1
+
+        // Konstruktor
+        public TpcKoppling(Form1 form1)
+        {
+            this.form = form1;
+        }
+
 
         // Startar kopplingen till servern
         public void StartaKoppinig()
@@ -56,6 +64,9 @@ namespace Guldkortet2
 
                 // Konverterar bytes till Unicode
                 string kod = Encoding.Unicode.GetString(buffer, 0, n);
+
+                form.HanteraKod(kod); // Form1 får koden varje gång Nos:_Export skickar något
+
 
                 string svar = kod; // Svarar och skriver ut till NOS_Export MessageBox
                 byte[] data = Encoding.Unicode.GetBytes(svar); // Svaret kodas som Unicode

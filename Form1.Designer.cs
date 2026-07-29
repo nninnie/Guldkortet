@@ -90,6 +90,7 @@
             this.txtKortnummer.Name = "txtKortnummer";
             this.txtKortnummer.Size = new System.Drawing.Size(441, 26);
             this.txtKortnummer.TabIndex = 6;
+            this.txtKortnummer.TextChanged += new System.EventHandler(this.txtKortnummer_TextChanged);
             // 
             // lstKoder
             // 
@@ -99,6 +100,7 @@
             this.lstKoder.Name = "lstKoder";
             this.lstKoder.Size = new System.Drawing.Size(691, 204);
             this.lstKoder.TabIndex = 7;
+            this.lstKoder.SelectedIndexChanged += new System.EventHandler(this.lstKoder_SelectedIndexChanged);
             // 
             // lblStatus
             // 
@@ -108,6 +110,7 @@
             this.lblStatus.Size = new System.Drawing.Size(143, 20);
             this.lblStatus.TabIndex = 8;
             this.lblStatus.Text = "Status: Ej ansluten";
+            this.lblStatus.Click += new System.EventHandler(this.lblStatus_Click);
             // 
             // label1
             // 
@@ -127,6 +130,7 @@
             this.btnSparaFil.TabIndex = 10;
             this.btnSparaFil.Text = "Spara till textfil";
             this.btnSparaFil.UseVisualStyleBackColor = true;
+            this.btnSparaFil.Click += new System.EventHandler(this.btnSparaFil_Click);
             // 
             // btnAvsluta
             // 
@@ -136,6 +140,7 @@
             this.btnAvsluta.TabIndex = 11;
             this.btnAvsluta.Text = "Avsluta";
             this.btnAvsluta.UseVisualStyleBackColor = true;
+            this.btnAvsluta.Click += new System.EventHandler(this.btnAvsluta_Click);
             // 
             // Form1
             // 
