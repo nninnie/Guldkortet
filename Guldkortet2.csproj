@@ -55,7 +55,10 @@
     <Compile Include="Model\Beloning.cs" />
     <Compile Include="Model\DunderkattBeloning.cs" />
     <Compile Include="Model\EldtomatBeloning.cs" />
+    <Compile Include="Model\Kort.cs" />
     <Compile Include="Model\KristallhastBeloning.cs" />
+    <Compile Include="Model\Kund.cs" />
+    <Compile Include="Model\Loggpost.cs" />
     <Compile Include="Model\OverpandaBeloning.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
