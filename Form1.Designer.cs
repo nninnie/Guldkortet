@@ -35,8 +35,11 @@
             this.lblSvarResultat = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.txtKortnummer = new System.Windows.Forms.TextBox();
-            this.lstMottagnaKoder = new System.Windows.Forms.ListBox();
+            this.lstKoder = new System.Windows.Forms.ListBox();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnSparaFil = new System.Windows.Forms.Button();
+            this.btnAvsluta = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblNos
@@ -88,31 +91,62 @@
             this.txtKortnummer.Size = new System.Drawing.Size(441, 26);
             this.txtKortnummer.TabIndex = 6;
             // 
-            // lstMottagnaKoder
+            // lstKoder
             // 
-            this.lstMottagnaKoder.FormattingEnabled = true;
-            this.lstMottagnaKoder.ItemHeight = 20;
-            this.lstMottagnaKoder.Location = new System.Drawing.Point(46, 177);
-            this.lstMottagnaKoder.Name = "lstMottagnaKoder";
-            this.lstMottagnaKoder.Size = new System.Drawing.Size(691, 204);
-            this.lstMottagnaKoder.TabIndex = 7;
+            this.lstKoder.FormattingEnabled = true;
+            this.lstKoder.ItemHeight = 20;
+            this.lstKoder.Location = new System.Drawing.Point(46, 177);
+            this.lstKoder.Name = "lstKoder";
+            this.lstKoder.Size = new System.Drawing.Size(691, 204);
+            this.lstKoder.TabIndex = 7;
             // 
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(46, 400);
+            this.lblStatus.Location = new System.Drawing.Point(42, 471);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(143, 20);
             this.lblStatus.TabIndex = 8;
             this.lblStatus.Text = "Status: Ej ansluten";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.DarkGoldenrod;
+            this.label1.Location = new System.Drawing.Point(42, 442);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(693, 20);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "____________________________________________________________________________";
+            // 
+            // btnSparaFil
+            // 
+            this.btnSparaFil.Location = new System.Drawing.Point(226, 404);
+            this.btnSparaFil.Name = "btnSparaFil";
+            this.btnSparaFil.Size = new System.Drawing.Size(146, 35);
+            this.btnSparaFil.TabIndex = 10;
+            this.btnSparaFil.Text = "Spara till textfil";
+            this.btnSparaFil.UseVisualStyleBackColor = true;
+            // 
+            // btnAvsluta
+            // 
+            this.btnAvsluta.Location = new System.Drawing.Point(418, 404);
+            this.btnAvsluta.Name = "btnAvsluta";
+            this.btnAvsluta.Size = new System.Drawing.Size(146, 35);
+            this.btnAvsluta.TabIndex = 11;
+            this.btnAvsluta.Text = "Avsluta";
+            this.btnAvsluta.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 512);
+            this.Controls.Add(this.btnAvsluta);
+            this.Controls.Add(this.btnSparaFil);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.lstMottagnaKoder);
+            this.Controls.Add(this.lstKoder);
             this.Controls.Add(this.txtKortnummer);
             this.Controls.Add(this.lblSvarResultat);
             this.Controls.Add(this.lblResultat);
@@ -133,8 +167,11 @@
         private System.Windows.Forms.Label lblSvarResultat;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.TextBox txtKortnummer;
-        private System.Windows.Forms.ListBox lstMottagnaKoder;
+        private System.Windows.Forms.ListBox lstKoder;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnSparaFil;
+        private System.Windows.Forms.Button btnAvsluta;
     }
 }
 
