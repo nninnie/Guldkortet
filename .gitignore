@@ -261,11 +261,6 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
-# SQL Server lokala databaser och loggar
-*.mdf
-*.ldf
-*.ndf
-
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
