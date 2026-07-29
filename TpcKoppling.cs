@@ -36,6 +36,14 @@ namespace Guldkortet2
                 {
                     // Väntar asykron på att NOS_Export ansluter
                     klient = await lyssnare.AcceptTcpClientAsync();
+
+                    // TCP kör i bakgrunden och får inte röra UI direkt, annars kraschar programmet.
+                    // Invoke låter UI‑tråden göra jobbet och gör det trådsäkert.
+                    form.Invoke(new Action(() =>
+                    {
+                        form.UppdateraStatus("Ansluten till NOS-Export"); // När NOS_Export ansluter ändra status i UI status
+                    }));
+
                 }
                 // Felhantering 
                 catch
@@ -65,11 +73,17 @@ namespace Guldkortet2
                 // Konverterar bytes till Unicode
                 string kod = Encoding.Unicode.GetString(buffer, 0, n);
 
-                form.HanteraKod(kod); // Form1 får koden varje gång Nos:_Export skickar något
+                // Tom sträng, resultat fylls i invoke 
+                string resultat = "";
 
+                // TCP kör i bakgrunden och får inte röra UI direkt, annars kraschar programmet
+                // Invoke låter UI‑tråden göra jobbet och gör det trådsäkert
+                                form.Invoke(new Action(() =>
+                {
+                    resultat = form.HanteraKod(kod); 
+                }));
 
-                string svar = kod; // Svarar och skriver ut till NOS_Export MessageBox
-                byte[] data = Encoding.Unicode.GetBytes(svar); // Svaret kodas som Unicode
+                byte[] data = Encoding.Unicode.GetBytes(resultat); // Svaret kodas som Unicode
                 await stream.WriteAsync(data, 0, data.Length); // Svaret skickas tillbaka til NOS_export
             }
             // Felahantering vid error 

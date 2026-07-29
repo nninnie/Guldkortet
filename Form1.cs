@@ -98,7 +98,7 @@ namespace Guldkortet2
         }
 
         // Metod som anropas av TCP‑lyssnaren när en kod tas emot från NOS_Export
-        public void HanteraKod(string mottagenKod)
+        public string HanteraKod(string mottagenKod)
         {
             // Använder metoden ProcessaKod via GuldkortService för koden
             string resultat = guldkortService.ProcessaKod(mottagenKod);
@@ -108,6 +108,16 @@ namespace Guldkortet2
 
             // Visa resultatet i UI
             lblSvarResultat.Text = resultat;
+
+            return resultat; // Returnerar resultatet
         }
+
+        // Uppdaterar status till grön text vid anslutning till NOS_Export
+        public void UppdateraStatus(string text)
+        {
+            lblStatus.Text = text; // Uppdaterar texten
+            lblStatus.ForeColor = Color.Green; // Gör texten grön
+        }
+
     }
 }
