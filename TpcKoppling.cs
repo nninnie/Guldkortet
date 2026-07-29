@@ -29,10 +29,9 @@ namespace Guldkortet2
                     // Väntar asykron på att NOS_Export ansluter
                     klient = await lyssnare.AcceptTcpClientAsync();
                 }
-                // Felhantering vi error till konsolen
-                catch (Exception error)
+                // Felhantering 
+                catch
                 {
-                    Console.WriteLine("Fel vid anslutning: " + error.Message);
                     return;
                 }
                 // Startar läsningen från NOS_Export, inkomande data
@@ -58,29 +57,26 @@ namespace Guldkortet2
                 // Konverterar bytes till Unicode
                 string kod = Encoding.Unicode.GetString(buffer, 0, n);
 
-                //Skriver ut koden
-                Console.WriteLine("Mottog: " + kod);
-
-                string svar = kod; // Skickar in koden till textbox
+                string svar = kod; // Svarar och skriver ut till NOS_Export MessageBox
                 byte[] data = Encoding.Unicode.GetBytes(svar); // Svaret kodas som Unicode
                 await stream.WriteAsync(data, 0, data.Length); // Svaret skickas tillbaka til Nos_xport
             }
-            // Felahantering vid error sakriver ut till konsolen
-            catch (Exception error) 
+            // Felahantering vid error 
+            catch 
             {
-                Console.WriteLine("Fel vid läsning: " + error.Message);
                 return;
             }
 
             // Rekursiv loop - metoden anropar sig själv, som en while loop
+            // Varje läsning är asynkron och metoden anropar sig själv för att fortsätta lyssna
             StartaLäsning(k);
         }
 
         // Stoppar servern 
         public void StoppaKoppling()
         {
-            klient?.Close(); // stänger klienten
-            lyssnare?.Stop(); /// stänger lyssnare
+            klient?.Close(); // Stänger klienten
+            lyssnare?.Stop(); // Stänger lyssnare
         }
     }
-}
+} 
