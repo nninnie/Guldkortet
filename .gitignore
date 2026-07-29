@@ -356,7 +356,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/Kortregister.mdf
-/Kortregister_log.ldf
-/Kundregister.mdf
-/Kundregister_log.ldf
