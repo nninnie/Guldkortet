@@ -69,6 +69,11 @@ ScaffoldingReadMe.txt
 # StyleCop
 StyleCopReport.xml
 
+# SQL Server lokala databaser
+*.mdf
+*.ldf
+*.ndf
+
 # Files built by Visual Studio
 *_i.c
 *_p.c
@@ -261,10 +266,6 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
-# SQL Server files
-*.mdf
-*.ldf
-*.ndf
 
 # Business Intelligence projects
 *.rdl.data
