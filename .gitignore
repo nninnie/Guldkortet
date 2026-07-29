@@ -50,6 +50,12 @@ Generated\ Files/
 TestResult.xml
 nunit-*.xml
 
+# SQL Server lokala databaser och loggar
+*.mdf
+*.ldf
+*.ndf
+
+
 # Build Results of an ATL Project
 [Dd]ebugPS/
 [Rr]eleasePS/

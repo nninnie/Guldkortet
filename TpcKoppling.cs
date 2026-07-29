@@ -44,7 +44,7 @@ namespace Guldkortet2
         {
             try
             {
-                // Hämta NetworkStream  - strömen där data skcikas
+                // Hämta NetworkStream  - strömen där data skickas
                 NetworkStream stream = k.GetStream();
 
                 byte[] buffer = new byte[1024]; // Skapa buffer för inkomande bytes
@@ -59,7 +59,7 @@ namespace Guldkortet2
 
                 string svar = kod; // Svarar och skriver ut till NOS_Export MessageBox
                 byte[] data = Encoding.Unicode.GetBytes(svar); // Svaret kodas som Unicode
-                await stream.WriteAsync(data, 0, data.Length); // Svaret skickas tillbaka til Nos_xport
+                await stream.WriteAsync(data, 0, data.Length); // Svaret skickas tillbaka til NOS_export
             }
             // Felahantering vid error 
             catch 
