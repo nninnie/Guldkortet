@@ -40,6 +40,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.btnSparaFil = new System.Windows.Forms.Button();
             this.btnAvsluta = new System.Windows.Forms.Button();
+            this.btnValideraKod = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblNos
@@ -88,7 +89,7 @@
             // 
             this.txtKortnummer.Location = new System.Drawing.Point(170, 29);
             this.txtKortnummer.Name = "txtKortnummer";
-            this.txtKortnummer.Size = new System.Drawing.Size(441, 26);
+            this.txtKortnummer.Size = new System.Drawing.Size(423, 26);
             this.txtKortnummer.TabIndex = 6;
             this.txtKortnummer.TextChanged += new System.EventHandler(this.txtKortnummer_TextChanged);
             // 
@@ -142,11 +143,23 @@
             this.btnAvsluta.UseVisualStyleBackColor = true;
             this.btnAvsluta.Click += new System.EventHandler(this.btnAvsluta_Click);
             // 
+            // btnValideraKod
+            // 
+            this.btnValideraKod.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnValideraKod.ForeColor = System.Drawing.Color.DarkGoldenrod;
+            this.btnValideraKod.Location = new System.Drawing.Point(618, 26);
+            this.btnValideraKod.Name = "btnValideraKod";
+            this.btnValideraKod.Size = new System.Drawing.Size(119, 32);
+            this.btnValideraKod.TabIndex = 12;
+            this.btnValideraKod.Text = "Validera kod";
+            this.btnValideraKod.UseVisualStyleBackColor = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 512);
+            this.Controls.Add(this.btnValideraKod);
             this.Controls.Add(this.btnAvsluta);
             this.Controls.Add(this.btnSparaFil);
             this.Controls.Add(this.label1);
@@ -177,6 +190,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnSparaFil;
         private System.Windows.Forms.Button btnAvsluta;
+        private System.Windows.Forms.Button btnValideraKod;
     }
 }
 

@@ -22,7 +22,7 @@ namespace Guldkortet2
 
 
         // Startar kopplingen till servern
-        public void StartaKoppinig()
+        public void StartaKoppling()
         {
             // Skapar lyssnare på port 12345, IP: 127.0.0.1
             lyssnare = new TcpListener(IPAddress.Parse("127.0.0.1"), 12345);
@@ -43,12 +43,12 @@ namespace Guldkortet2
                     return;
                 }
                 // Startar läsningen från NOS_Export, inkomande data
-                StartaLäsning(klient);
+                StartaLasning(klient);
             });
         }
 
         // Läser inkommande data från NOS_Export
-        private async void StartaLäsning(TcpClient k)
+        private async void StartaLasning(TcpClient k)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace Guldkortet2
 
             // Rekursiv loop - metoden anropar sig själv, som en while loop
             // Varje läsning är asynkron och metoden anropar sig själv för att fortsätta lyssna
-            StartaLäsning(k);
+            StartaLasning(k);
         }
 
         // Stoppar servern 
