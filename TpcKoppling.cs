@@ -13,9 +13,7 @@ namespace Guldkortet2
     {
         private TcpClient klient; // Klienten (NOS_Export) som ansluter                  
         private TcpListener lyssnare; // Servern som lyssnar
-        private Form1 form; // Kunna praata med Form1
-        private bool running = true; // När running är true fortsätter servern läsa data
-
+        private Form1 form; // Kunna prata med Form1
 
         // Konstruktor för tpcKoppling
         public TpcKoppling(Form1 form1)
@@ -28,6 +26,7 @@ namespace Guldkortet2
         {
             // Skapar lyssnare på port 12345, IP: 127.0.0.1
             lyssnare = new TcpListener(IPAddress.Parse("127.0.0.1"), 12345);
+
             //Startar lyssnare
             lyssnare.Start();
 
@@ -57,78 +56,73 @@ namespace Guldkortet2
             });
         }
 
-        // Läser inkommande data från NOS_Export
-        private async void StartaLasning(TcpClient k)
+        // Läser inkommande data från NOS_Export 
+        private async void StartaLasning(TcpClient klient)
         {
-        
-                // Hämta NetworkStream  - strömen där data skickas
-                NetworkStream stream = k.GetStream();
+            // Hämta NetworkStream – strömmen där data skickas
+            NetworkStream stream = klient.GetStream();
 
-            // Loop för att läsa TPC data som komemr in så länmge running är true och klienten är ansluten
-            while (running && k.Connected)
-            {
-                int n;
-                byte[] buffer = new byte[1024]; // Skapa buffer för inkomande bytes
-
-                // Om något går fel, fånga felet och stoppa kraschen
-                try
-                {
-                    // Läser datan asykront 
-                    n = await stream.ReadAsync(buffer, 0, buffer.Length); 
-                }
-                catch
-                {
-                    break; // Avslutar
-                }
-
-                // Klienten stängs om inga byte läses in
-                if (n <= 0)
-                    break;
-
-                // Konverterar bytes till Unicode
-                string kod = Encoding.Unicode.GetString(buffer, 0, n).Trim();
-
-                // Tom sträng, resultat fylls i invoke 
-                string resultat = "";
-
-                // TCP kör i bakgrunden och får inte röra UI direkt, annars kraschar programmet
-                // Invoke låter UI‑tråden göra jobbet och gör det trådsäkert
-                                form.Invoke(new Action(() =>
-                {
-                    resultat = form.HanteraKod(kod); 
-                }));
-
-                byte[] data = Encoding.Unicode.GetBytes(resultat); // Svaret kodas som Unicode
-                await stream.WriteAsync(data, 0, data.Length); // Svaret skickas tillbaka til NOS_export
-            }
-
-
-            // Om något går fel, fånga felet och stoppa kraschen
             try
             {
-                k.Close(); // Stänger ner
+                byte[] buffer = new byte[1024]; // Buffer för inkommande bytes
+
+                // Läser inkommande data asynkront
+                int antalBytes = await stream.ReadAsync(buffer, 0, buffer.Length);
+
+                // Avslutar om inga byte läses in 
+                if (antalBytes <= 0)
+                {
+                    klient.Close(); // Stänger anslutningen
+                    return;
+                }
+
+                // Konverterar mottagna byte till Unicode-text
+                string kod = Encoding.Unicode.GetString(buffer, 0, antalBytes).Trim();
+
+                string resultat = ""; // Tom sträng som fylls i via Invoke
+
+                // TCP kör i bakgrunden och får inte uppdatera UI direkt
+                // Invoke låter UI‑tråden hantera resultatet trådsäkert
+                form.Invoke(new Action(() =>
+                {
+                    resultat = form.HanteraKod(kod); // Hanterar koden i Form1
+                }));
+
+                // Kodar svaret som Unicode och skickar tillbaka till NOS_Export
+                byte[] data = Encoding.Unicode.GetBytes(resultat);
+                await stream.WriteAsync(data, 0, data.Length);
             }
             catch
             {
-
+                // Avslutar vid fel 
+                try { klient.Close(); } catch { }
+                return;
             }
+
+            // Anropa StartaLasning igen för att fortsätta läsa
+            StartaLasning(klient);
         }
+
 
         // Stoppar servern 
         public void StoppaKoppling()
         {
-            // Stoppar while-loopen från att läsa mer
-            running = false;
-
-            //Om något går fel, fånga felet och stoppa kraschen - Try catch
             try
             {
-                // Stänger TCP-lyssnaren
-                lyssnare.Stop();
+                klient.Close(); // Stänger anslutningen till klient
             }
             catch
             {
-                // Ignorerar fel vid stopp
+                // Ignorerar fel
+            }
+
+            try
+            {
+                lyssnare.Stop(); // Stänger lyssnaren till servern som tar emot anslutningar från NOS_Export
+            }
+            catch
+            {
+                // Ignorerar fel
             }
         }
     }
