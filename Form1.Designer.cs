@@ -145,14 +145,16 @@
             // 
             // btnValideraKod
             // 
-            this.btnValideraKod.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnValideraKod.ForeColor = System.Drawing.Color.DarkGoldenrod;
+            this.btnValideraKod.BackColor = System.Drawing.Color.White;
+            this.btnValideraKod.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnValideraKod.ForeColor = System.Drawing.Color.Black;
             this.btnValideraKod.Location = new System.Drawing.Point(618, 26);
             this.btnValideraKod.Name = "btnValideraKod";
             this.btnValideraKod.Size = new System.Drawing.Size(119, 32);
             this.btnValideraKod.TabIndex = 12;
             this.btnValideraKod.Text = "Validera kod";
             this.btnValideraKod.UseVisualStyleBackColor = false;
+            this.btnValideraKod.Click += new System.EventHandler(this.btnValideraKort_Click);
             // 
             // Form1
             // 

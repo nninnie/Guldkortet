@@ -95,6 +95,9 @@ namespace Guldkortet2
 
             lstKoder.Items.Add(kod); // Visar kod i listan
             lblSvarResultat.Text = resultat; // Visar resultat
+
+            // Popup med resultatet av validerad kod
+            MessageBox.Show(resultat, "Validering", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         // Metod som anropas av TCP‑lyssnaren när en kod tas emot från NOS_Export
