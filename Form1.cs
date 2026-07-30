@@ -43,6 +43,7 @@ namespace Guldkortet2
         // Sparar loggpost till guldkort2_logg.txt
         private void btnSparaFil_Click(object sender, EventArgs e)
         {
+            // Skriver ut logg till guldkort2_logg.txt
             using (var writer = new StreamWriter("guldkort2_logg.txt", append: true))
             {
                 foreach (var logg in guldkortService.HamtaLoggar())
@@ -72,6 +73,7 @@ namespace Guldkortet2
                 }
             }
 
+            MessageBox.Show("Loggar sparade!"); // Bekräftelse till användaren
             tcp.StoppaKoppling(); // Stoppar lyssnaren när programmet avslutas
         }
 
