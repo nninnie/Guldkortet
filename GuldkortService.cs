@@ -161,6 +161,7 @@ namespace Guldkortet2
             string anvandarNr = delar[0];
             string kortNr = delar[1];
 
+
                 // Kollar om kund och kort finns i databasen
                 bool kundFinns = KollaKund(anvandarNr);
                 bool kortFinns = KollaKort(kortNr);
