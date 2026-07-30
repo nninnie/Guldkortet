@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -13,13 +14,14 @@ namespace Guldkortet2
         private TcpClient klient; // Klienten (NOS_Export) som ansluter                  
         private TcpListener lyssnare; // Servern som lyssnar
         private Form1 form; // Kunna praata med Form1
+        private bool running = true; // När running är true fortsätter servern läsa data
 
-        // Konstruktor
+
+        // Konstruktor för tpcKoppling
         public TpcKoppling(Form1 form1)
         {
-            this.form = form1;
+            this.form = form1; // Form1 obejekt sparas i variabel
         }
-
 
         // Startar kopplingen till servern
         public void StartaKoppling()
@@ -58,20 +60,33 @@ namespace Guldkortet2
         // Läser inkommande data från NOS_Export
         private async void StartaLasning(TcpClient k)
         {
-            try
-            {
+        
                 // Hämta NetworkStream  - strömen där data skickas
                 NetworkStream stream = k.GetStream();
 
+            // Loop för att läsa TPC data som komemr in så länmge running är true och klienten är ansluten
+            while (running && k.Connected)
+            {
+                int n;
                 byte[] buffer = new byte[1024]; // Skapa buffer för inkomande bytes
-                int n = await stream.ReadAsync(buffer, 0, buffer.Length); // läser datan asykront 
+
+                // Om något går fel, fånga felet och stoppa kraschen
+                try
+                {
+                    // Läser datan asykront 
+                    n = await stream.ReadAsync(buffer, 0, buffer.Length); 
+                }
+                catch
+                {
+                    break; // Avslutar
+                }
 
                 // Klienten stängs om inga byte läses in
                 if (n <= 0)
-                    return;
+                    break;
 
                 // Konverterar bytes till Unicode
-                string kod = Encoding.Unicode.GetString(buffer, 0, n);
+                string kod = Encoding.Unicode.GetString(buffer, 0, n).Trim();
 
                 // Tom sträng, resultat fylls i invoke 
                 string resultat = "";
@@ -86,22 +101,35 @@ namespace Guldkortet2
                 byte[] data = Encoding.Unicode.GetBytes(resultat); // Svaret kodas som Unicode
                 await stream.WriteAsync(data, 0, data.Length); // Svaret skickas tillbaka til NOS_export
             }
-            // Felahantering vid error 
-            catch 
-            {
-                return;
-            }
 
-            // Rekursiv loop - metoden anropar sig själv, som en while loop
-            // Varje läsning är asynkron och metoden anropar sig själv för att fortsätta lyssna
-            StartaLasning(k);
+
+            // Om något går fel, fånga felet och stoppa kraschen
+            try
+            {
+                k.Close(); // Stänger ner
+            }
+            catch
+            {
+
+            }
         }
 
         // Stoppar servern 
         public void StoppaKoppling()
         {
-            klient?.Close(); // Stänger klienten
-            lyssnare?.Stop(); // Stänger lyssnare
+            // Stoppar while-loopen från att läsa mer
+            running = false;
+
+            //Om något går fel, fånga felet och stoppa kraschen - Try catch
+            try
+            {
+                // Stänger TCP-lyssnaren
+                lyssnare.Stop();
+            }
+            catch
+            {
+                // Ignorerar fel vid stopp
+            }
         }
     }
 } 

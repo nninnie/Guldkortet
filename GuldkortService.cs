@@ -147,7 +147,7 @@ namespace Guldkortet2
                 if (string.IsNullOrWhiteSpace(mottagenKod))
                 return "Fel: Koden är tom.";
 
-            // Validering:Saknar bindestreck
+            // Validering: Saknar bindestreck
             if (!mottagenKod.Contains("-"))
                 return "Fel: Koden saknar bindestreck.";
 
