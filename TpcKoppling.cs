@@ -143,6 +143,7 @@ namespace Guldkortet2
 
                 // TCP kör i bakgrunden och får inte röra UI direkt, annars kraschar programmet
                 // Invoke låter UI‑tråden göra jobbet och gör det trådsäkert
+                // Trådsäkerhet = flera trådar får inte ändra samma sak samtidigt, resulterar i att proigrammett kraschar/konstigt betteende 
                 form.Invoke(new Action(() =>
                     {
                         form.UppdateraStatus("Frånkopplad från NOS-Export");

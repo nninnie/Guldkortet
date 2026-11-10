@@ -131,8 +131,8 @@ namespace Guldkortet2
         {
             loggar.Add(logg);
         }
-
-        // Hämta alla loggar
+        // Returnerar alla loggposter som sparats i den generiska listan
+        // Form1 hämta alla loggar och skriver ut till textfilen när programmet avslutas eller spara knappen
         public List<Loggpost> HamtaLoggar()
         {
             return loggar;
