@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0C89FB22-007F-424D-8ED3-C88FE9E6EA76}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Guldkortet2</RootNamespace>
-    <AssemblyName>Guldkortet2</AssemblyName>
+    <RootNamespace>Guldkortet</RootNamespace>
+    <AssemblyName>Guldkortet</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -71,14 +71,12 @@
     <Compile Include="Model\Beloning.cs" />
     <Compile Include="Model\DunderkattBeloning.cs" />
     <Compile Include="Model\EldtomatBeloning.cs" />
-    <Compile Include="Model\Kort.cs" />
     <Compile Include="Model\KristallhastBeloning.cs" />
-    <Compile Include="Model\Kund.cs" />
     <Compile Include="Model\Loggpost.cs" />
     <Compile Include="Model\OverpandaBeloning.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TpcKoppling.cs" />
+    <Compile Include="TcpKoppling.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

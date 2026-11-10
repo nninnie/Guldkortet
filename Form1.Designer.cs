@@ -1,4 +1,4 @@
-﻿namespace Guldkortet2
+﻿namespace Guldkortet
 {
     partial class Form1
     {
@@ -91,7 +91,6 @@
             this.txtKortnummer.Name = "txtKortnummer";
             this.txtKortnummer.Size = new System.Drawing.Size(423, 26);
             this.txtKortnummer.TabIndex = 6;
-            this.txtKortnummer.TextChanged += new System.EventHandler(this.txtKortnummer_TextChanged);
             // 
             // lstKoder
             // 
@@ -101,7 +100,6 @@
             this.lstKoder.Name = "lstKoder";
             this.lstKoder.Size = new System.Drawing.Size(691, 204);
             this.lstKoder.TabIndex = 7;
-            this.lstKoder.SelectedIndexChanged += new System.EventHandler(this.lstKoder_SelectedIndexChanged);
             // 
             // lblStatus
             // 
@@ -111,7 +109,6 @@
             this.lblStatus.Size = new System.Drawing.Size(143, 20);
             this.lblStatus.TabIndex = 8;
             this.lblStatus.Text = "Status: Ej ansluten";
-            this.lblStatus.Click += new System.EventHandler(this.lblStatus_Click);
             // 
             // label1
             // 
@@ -173,8 +170,8 @@
             this.Controls.Add(this.lblKortnummer);
             this.Controls.Add(this.lblNos);
             this.Name = "Form1";
-            this.Text = "Form1";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing_1);
+            this.Text = "Guldkortet";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

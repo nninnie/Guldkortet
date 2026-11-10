@@ -1,190 +1,129 @@
-﻿using Guldkortet2.Model;
+﻿using Guldkortet.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace Guldkortet2
+namespace Guldkortet
 {
+    // Affärslogiken: validerar koder mot databaserna, delar ut belöningar och loggar resultatet
     public class GuldkortService
     {
         // Lista med alla loggposter under programmets körning
-        private List<Loggpost> loggar = new List<Loggpost>();
+        private readonly List<Loggpost> loggar = new List<Loggpost>();
+
+        // Koder som redan har fått en belöning (används för att stoppa dubbelregistrering).
+        // HashSet ger snabb sökning och kan inte innehålla dubbletter.
+        private readonly HashSet<string> registreradeKoder = new HashSet<string>();
 
         // ConnectionString som pekar på SQL-databasen Kundregister.mdf
         private readonly string kundConnectionString =
-    @"Data Source=(LocalDB)\MSSQLLocalDB;
-      AttachDbFilename=|DataDirectory|\Kundregister.mdf;
-      Integrated Security=True;";
+            @"Data Source=(LocalDB)\MSSQLLocalDB;
+              AttachDbFilename=|DataDirectory|\Kundregister.mdf;
+              Integrated Security=True;";
 
         // ConnectionString som pekar på SQL-databasen Kortregister.mdf
         private readonly string kortConnectionString =
             @"Data Source=(LocalDB)\MSSQLLocalDB;
-      AttachDbFilename=|DataDirectory|\Kortregister.mdf;
-      Integrated Security=True;";
+              AttachDbFilename=|DataDirectory|\Kortregister.mdf;
+              Integrated Security=True;";
 
-        // Kollar om kund finns i databasen SQL
+        // Kollar om kunden finns i databasen
         private bool KollaKund(string anvandarNr)
         {
-            // Skapar anslutningen med connectionstring
             using (var connection = new SqlConnection(kundConnectionString))
             {
-                connection.Open(); // öppnar anslutningen
-                
-                // SQL-fråga som hämtar kundens data
-                string sql = "SELECT AnvändarNr, Namn, Kommun FROM Kunder WHERE AnvändarNr = @AnvändarNr";
+                connection.Open();
 
-                // Skapar nytt SQL kommando
+                // Parametriserad fråga (@AnvändarNr) skyddar mot SQL injection
+                string sql = "SELECT AnvändarNr FROM Kunder WHERE AnvändarNr = @AnvändarNr";
+
                 using (var cmd = new SqlCommand(sql, connection))
                 {
-                    // Skickar in kundnumret som parameter
                     cmd.Parameters.AddWithValue("@AnvändarNr", anvandarNr);
 
-                    // Kör SELECT och får tillbaka en reader
                     using (var reader = cmd.ExecuteReader())
                     {
                         // Om reader hittar en rad så finns kunden
-                        if (reader.Read())
-                        {
-                            return true;
-                        }
+                        return reader.Read();
                     }
                 }
             }
-
-            // Om ingen rad hittades så finns inte kunden 
-            return false;
         }
 
-        // Kollar om kort finns i databasen SQL
-        private bool KollaKort(string kortNr)
-        {
-            // Skapar anslutning med connectionstring
-            using (var connection = new SqlConnection(kortConnectionString))
-            {
-                connection.Open(); // Öppnar anslutning
-
-                // SQL-fråga som hämtar kortets data
-                string sql = "SELECT KortNr, KortTyp FROM Kort WHERE KortNr = @KortNr";
-
-                // Skapar nytt SQL kommando
-                using (var cmd = new SqlCommand(sql, connection))
-                {
-                    // Skickar in kortnumret som parameter
-                    cmd.Parameters.AddWithValue("@KortNr", kortNr);
-
-                    // Kör SELECT och får tillbaka en reader
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        // Om reader hittar en rad så finns kortet 
-                        if (reader.Read())
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            // Om ingen rad hittades så finns inte kortet 
-            return false;
-        }
-
-        // Hämtar korttyp fån SQL Databasen
+        // Hämtar kortets typ från databasen, eller null om kortet inte finns
         private string HamtaKortTyp(string kortNr)
         {
-            // Skapar anslutning med connectionstring
-            using (var conn = new SqlConnection(kortConnectionString))
+            using (var connection = new SqlConnection(kortConnectionString))
             {
-                conn.Open(); // Öppnar anslutning
+                connection.Open();
 
-                // SQL-fråga som hämtar kortets data
                 string sql = "SELECT KortTyp FROM Kort WHERE KortNr = @KortNr";
 
-                // Skapar nytt SQL kommando
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand(sql, connection))
                 {
-                    cmd.Parameters.AddWithValue("@KortNr", kortNr); // lägger till parameter @kortNr
+                    cmd.Parameters.AddWithValue("@KortNr", kortNr);
 
-                    // Kör SQL-frågan
                     using (var reader = cmd.ExecuteReader())
                     {
-                        // Returnerar tru om en rad hittas
                         if (reader.Read())
                         {
-                            return reader["KortTyp"].ToString(); // Returnerar KortTyp
+                            return reader["KortTyp"].ToString();
                         }
                     }
                 }
             }
 
-            return null; // Om inget hittas returnerar null
+            return null; // Kortet finns inte
         }
-
-
 
         // Lägg till en loggpost
         public void LaggTillLogg(Loggpost logg)
         {
             loggar.Add(logg);
         }
-        // Returnerar alla loggposter som sparats i den generiska listan
-        // Form1 hämta alla loggar och skriver ut till textfilen när programmet avslutas eller spara knappen
-        public List<Loggpost> HamtaLoggar()
+
+        // Returnerar alla loggposter som sparats i listan.
+        // IReadOnlyList gör att Form1 kan läsa loggarna men inte ändra i listan.
+        public IReadOnlyList<Loggpost> HamtaLoggar()
         {
             return loggar;
         }
 
-        // Delar upp koden, kontrollerar att formatet är korrekt, validerar kund/kort, skapar belöning och loggar resultatet
+        // Delar upp koden, kontrollerar formatet, validerar kund/kort, skapar belöning och loggar resultatet
         public string ProcessaKod(string mottagenKod)
         {
-            try
-            {
-                // Validering: Tom kod eller mellanslag
-                if (string.IsNullOrWhiteSpace(mottagenKod))
+            // Validering: tom kod eller bara mellanslag
+            if (string.IsNullOrWhiteSpace(mottagenKod))
                 return "Fel: Koden är tom.";
 
-            // Validering: Saknar bindestreck
+            // Validering: saknar bindestreck
             if (!mottagenKod.Contains("-"))
                 return "Fel: Koden saknar bindestreck.";
 
-            // Delar upp koden i två delar
-            // Validering:Två delad kod
+            // Validering: koden måste bestå av exakt två delar (AnvändarNr-KortNr)
             var delar = mottagenKod.Split('-');
             if (delar.Length != 2)
                 return "Fel: Koden måste ha två delar.";
 
-            // Delar koden i 2 delar somm mottaget av NOS_Exxport för att kolla mot databasen
             string anvandarNr = delar[0];
             string kortNr = delar[1];
 
-
+            try
+            {
                 // Kollar om kund och kort finns i databasen
-                bool kundFinns = KollaKund(anvandarNr);
-                bool kortFinns = KollaKort(kortNr);
-
-                // Om kund inte finns
-                if (!kundFinns)
+                if (!KollaKund(anvandarNr))
                     throw new Exception($"Kunden {anvandarNr} finns inte.");
 
-                // Om kort inte finns
-                if (!kortFinns)
+                string kortTyp = HamtaKortTyp(kortNr)?.Trim();
+                if (kortTyp == null)
                     throw new Exception($"Kortet {kortNr} finns inte.");
 
-                // Dubbelregistrering
-                if (loggar.Any(l => l.Kod == mottagenKod))
+                // Dubbelregistrering: bara koder som redan har fått en belöning räknas
+                if (registreradeKoder.Contains(mottagenKod))
                     throw new Exception($"Kortet {kortNr} är redan registrerat.");
 
-                // Belöning via arv
+                // Belöning via arv: korttypen avgör vilken subklass som skapas
                 Beloning beloning;
-
-                // KortNr som avgör vilken typ av belöning 
-                // Hämtar belöniings beskrivning av subklassernas ToString()
-                // Default nekad belöning
-                string kortTyp = HamtaKortTyp(kortNr)?.Trim();
 
                 switch (kortTyp)
                 {
@@ -209,8 +148,9 @@ namespace Guldkortet2
                         break;
                 }
 
+                registreradeKoder.Add(mottagenKod);
 
-                // Logga godkänd kod
+                // Loggar godkänd kod
                 loggar.Add(new Loggpost
                 {
                     Tidstampel = DateTime.Now,
@@ -218,12 +158,12 @@ namespace Guldkortet2
                     BeloningsResultat = beloning.Beskrivning
                 });
 
-                // Skriver ut belonings beskrivning ToString() till textfil
+                // Subklassens ToString() ger texten som visas och skickas till NOS_Export (polymorfism)
                 return beloning.ToString();
             }
             catch (Exception ex)
             {
-                // Logga nekad kod
+                // Loggar nekad kod
                 loggar.Add(new Loggpost
                 {
                     Tidstampel = DateTime.Now,
@@ -231,7 +171,6 @@ namespace Guldkortet2
                     BeloningsResultat = ex.Message
                 });
 
-                // Returnerar nekad belöning textfil
                 return ex.Message;
             }
         }

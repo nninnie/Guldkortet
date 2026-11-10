@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Guldkortet2.Model
+﻿namespace Guldkortet.Model
 {
+    // EldtomatBeloning ärver av Beloning
     public class EldtomatBeloning : Beloning
     {
         public EldtomatBeloning()
@@ -14,7 +9,7 @@ namespace Guldkortet2.Model
             Beskrivning = "🔥 Eldtomat!"; // Skickas till NOS_Export
         }
 
-        // Tostring mmetod som skriver utt belönings beskrivningen till UI
+        // ToString-metod som skriver ut belöningens beskrivning till UI
         public override string ToString()
         {
             return $"Du har fått belöningen: {Beskrivning}";

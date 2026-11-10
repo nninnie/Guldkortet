@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Guldkortet2.Properties
+namespace Guldkortet.Properties
 {
 
 
