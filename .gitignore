@@ -366,5 +366,3 @@ FodyWeavers.xsd
 *.pdf
 *.docx
 guldkortet_logg.txt
-# Kursens testprogram (hämtas från kursen, delas inte här)
-NOS_Export.exe
