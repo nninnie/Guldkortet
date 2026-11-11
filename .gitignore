@@ -362,3 +362,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Guldkortet: egna dokument och filer som inte hör hemma i repot
+*.pdf
+*.docx
+guldkortet_logg.txt
+# Kursens testprogram (hämtas från kursen, delas inte här)
+NOS_Export.exe

@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Guldkortet2.Model
+namespace Guldkortet.Model
 {
     public class Loggpost
     {
-        public DateTime Tidstampel {  get; set; } // Tidstämpel
-        public string Kod {  get; set; } // Kod = AnvändarNr-KortNr 
-        public string BeloningsResultat { get; set; } // Belönings resulttat
+        public DateTime Tidstampel { get; set; } // Tidstämpel
+        public string Kod { get; set; } // Kod = AnvändarNr-KortNr
+        public string BeloningsResultat { get; set; } // Belöningens resultat
 
         // Skriver ut loggposten som en rad i textfilen
         public override string ToString()

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Guldkortet2.Model
+﻿namespace Guldkortet.Model
 {
+    // DunderkattBeloning ärver av Beloning
     public class DunderkattBeloning : Beloning
     {
         public DunderkattBeloning()
@@ -14,10 +9,10 @@ namespace Guldkortet2.Model
             Beskrivning = "🎉 Dunderkatt!"; // Skickas till NOS_Export
         }
 
-        // Tostring mmetod som skriver utt belönings beskrivningen till UI
+        // ToString-metod som skriver ut belöningens beskrivning till UI
         public override string ToString()
         {
-            return $"Du har fått belöningen: {Beskrivning}";   
+            return $"Du har fått belöningen: {Beskrivning}";
         }
     }
 }

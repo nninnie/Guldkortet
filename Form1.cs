@@ -1,128 +1,109 @@
-﻿using Guldkortet2.Model;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Guldkortet2
+namespace Guldkortet
 {
     public partial class Form1 : Form
     {
-        // Fält för tillgång till guldkorservice klassen
-        private GuldkortService guldkortService = new GuldkortService();
+        // Filen som loggarna sparas i
+        private const string LoggFil = "guldkortet_logg.txt";
 
-        // Fält för TCP‑kommunikationen mot NOS_Export
-        private TpcKoppling tcp;
+        // Affärslogiken (validering, belöningar och loggar)
+        private readonly GuldkortService guldkortService = new GuldkortService();
+
+        // TCP-kommunikationen mot NOS_Export
+        private readonly TcpKoppling tcp;
+
+        // Hur många loggposter som redan har skrivits till filen (så att inget sparas två gånger)
+        private int antalSparadeLoggar = 0;
 
         public Form1()
         {
-            InitializeComponent(); // Skapar alla UI‑komponenter
+            InitializeComponent(); // Skapar alla UI-komponenter
 
-            tcp = new TpcKoppling(this); // Skapar Tpc objektet som lyssnar på NOS_Export
-            tcp.StartaKoppling(); // Startar kopplingen till servern
+            tcp = new TcpKoppling(this); // Skapar TCP-objektet som lyssnar på NOS_Export
+            tcp.StartaKoppling();        // Startar servern
 
-            lblStatus.Text = "Lyssnar på NOS-Export..."; // Status ändring för Tpc koppling
+            lblStatus.Text = "Lyssnar på NOS-Export...";
         }
 
-        private void txtKortnummer_TextChanged(object sender, EventArgs e)
-        {
-            // Ingen funktion – kunden skriver in kortnummer
-        }
-
-        private void lstKoder_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Ingen funktion – list används bara för att visa resultat från koder
-        }
-
-        // Sparar loggpost till guldkort2_logg.txt
-        private void btnSparaFil_Click(object sender, EventArgs e)
-        {
-            // Skriver ut logg till guldkort2_logg.txt
-            using (var writer = new StreamWriter("guldkort2_logg.txt", append: true))
-            {
-                foreach (var logg in guldkortService.HamtaLoggar())
-                {
-                    writer.WriteLine(logg.ToString()); // Skriver ut loggpost via ToString()
-                }
-            }
-
-            MessageBox.Show("Loggar sparade!"); // Bekräftelse till användaren
-        }
-
-        // Avslutar programet                 
-        private void btnAvsluta_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        // När programmet avlsutas så skrivs det ut till guldkort2_logg.txt
-        private void Form1_FormClosing_1(object sender, FormClosingEventArgs e)
-        {
-            // Skriver ut logg till guldkort2_logg.txt
-            using (var writer = new StreamWriter("guldkort2_logg.txt", append: true))
-            {
-                foreach (var logg in guldkortService.HamtaLoggar())
-                {
-                    writer.WriteLine(logg.ToString());   // Använder Loggpost ToString()
-                }
-            }
-
-            MessageBox.Show("Loggar sparade!"); // Bekräftelse till användaren
-            tcp.StoppaKoppling(); // Stoppar lyssnaren när programmet avslutas
-        }
-
-
-        private void lblStatus_Click(object sender, EventArgs e)
-        {
-            // Ingen funktion – label används bara för att visa status
-        }
-
-        private void lblSvarResultat_Click(object sender, EventArgs e)
-        {
-            // Ingen funktion – label används bara för att visa resultat
-        }
-
-        // Validerar koden och skickar till ProcessaKod
+        // Validerar koden som skrivs in manuellt i textrutan
         private void btnValideraKort_Click(object sender, EventArgs e)
         {
-            string kod = txtKortnummer.Text; // Hämtar inmatad kod 
-
-            string resultat = guldkortService.ProcessaKod(kod); // Processar koden
-
-            lstKoder.Items.Add(kod); // Visar kod i listan
-            lblSvarResultat.Text = resultat; // Visar resultat
+            string resultat = HanteraKod(txtKortnummer.Text);
 
             // Popup med resultatet av validerad kod
             MessageBox.Show(resultat, "Validering", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        // Metod som anropas av TCP‑lyssnaren när en kod tas emot från NOS_Export
+        // Anropas både av knappen och av TCP-lyssnaren när en kod tas emot från NOS_Export
         public string HanteraKod(string mottagenKod)
         {
-            // Använder metoden ProcessaKod via GuldkortService för koden
             string resultat = guldkortService.ProcessaKod(mottagenKod);
 
-            // Visa mottagen kod i listan
-            lstKoder.Items.Add(mottagenKod);
+            lstKoder.Items.Add(mottagenKod); // Visar koden i listan
+            lblSvarResultat.Text = resultat; // Visar resultatet
 
-            // Visa resultatet i UI
-            lblSvarResultat.Text = resultat;
-
-            return resultat; // Returnerar resultatet
+            return resultat;
         }
 
-        // Uppdaterar status till grön text vid anslutning till NOS_Export
-        public void UppdateraStatus(string text)
+        // Uppdaterar statusraden: grön när NOS_Export är ansluten, röd när den är frånkopplad
+        public void UppdateraStatus(string text, bool ansluten)
         {
-            lblStatus.Text = text; // Uppdaterar texten
-            lblStatus.ForeColor = Color.Green; // Gör texten grön
+            lblStatus.Text = text;
+            lblStatus.ForeColor = ansluten ? Color.Green : Color.Firebrick;
         }
 
+        // Sparar nya loggposter till textfilen. Returnerar hur många som sparades.
+        private int SparaLoggar()
+        {
+            // Skip hoppar över loggar som redan har sparats tidigare
+            var nyaLoggar = guldkortService.HamtaLoggar().Skip(antalSparadeLoggar).ToList();
+
+            if (nyaLoggar.Count == 0)
+            {
+                return 0;
+            }
+
+            // append: true = lägger till i slutet av filen i stället för att skriva över den
+            using (var writer = new StreamWriter(LoggFil, append: true))
+            {
+                foreach (var logg in nyaLoggar)
+                {
+                    writer.WriteLine(logg.ToString()); // Använder Loggpost.ToString()
+                }
+            }
+
+            antalSparadeLoggar += nyaLoggar.Count;
+            return nyaLoggar.Count;
+        }
+
+        // Knappen "Spara till textfil"
+        private void btnSparaFil_Click(object sender, EventArgs e)
+        {
+            int antal = SparaLoggar();
+
+            MessageBox.Show(antal > 0 ? $"{antal} loggar sparade!" : "Inga nya loggar att spara.");
+        }
+
+        // Knappen "Avsluta"
+        private void btnAvsluta_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        // När programmet stängs sparas loggarna och TCP-servern stoppas
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (SparaLoggar() > 0)
+            {
+                MessageBox.Show("Loggar sparade!");
+            }
+
+            tcp.StoppaKoppling();
+        }
     }
 }
